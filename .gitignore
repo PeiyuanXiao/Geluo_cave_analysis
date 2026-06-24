@@ -1,0 +1,20 @@
+# RStudio project user-specific files
+.Rproj.user/
+
+# R history / session data
+.Rhistory
+.Rapp.history
+.RData
+.RDataTmp
+.Ruserdata
+
+# Office temporary / lock files
+~$*.xls
+~$*.xlsx
+~$*.doc
+~$*.docx
+~$*.ppt
+~$*.pptx
+
+# Original raw data (not committed)
+Original_raw_data/
