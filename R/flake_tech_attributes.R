@@ -1,18 +1,17 @@
 # =============================================================================
-# Geluo Cave (GLD) — Complete-flake technological attributes (composite figure)
-# Descriptive distributions over all complete flakes (n = 118). Chart type chosen
-# per variable nature:
-#   Cortex (0-1 proportion)      -> histogram
-#   Elongation (L/W, continuous) -> histogram
-#   IPA (continuous, 17 NA)      -> histogram (n = 101; NA = linear/punctiform)
-#   n_dors_scar (count 0-6)      -> bar
-#   butt_type (5 categories)     -> bar, ordered
-#   Dorsal_scar_pattern (9 cats) -> horizontal bar, ordered (NA -> Indeterminate)
-# Composed with patchwork (3 x 2), tags a-f. No titles/subtitles (house rule).
+# Geluo Cave (GLD) — Complete-flake technological attributes BY Toth type
+# x-axis = Toth_type (recoded from Unicode Roman numerals U+2160-2165 to I-VI;
+#          BOA = bipolar-on-anvil). Composite of 6 panels, colour mapped to type.
+#   numeric (Cortex, Elongation, IPA, n_dors_scar) -> boxplot + jitter + mean
+#   categorical (butt_type, Dorsal_scar_pattern)   -> stacked proportion bars
+# NOTE: Toth type is defined by platform + dorsal cortex, so the Cortex and
+#       butt_type panels are largely circular (they re-express the definition);
+#       Elongation / IPA / n_dors_scar / Dorsal_scar_pattern are the informative
+#       contrasts. No titles/subtitles (house rule).
 # =============================================================================
 
 suppressPackageStartupMessages({
-  library(readxl); library(dplyr); library(ggplot2); library(patchwork)
+  library(readxl); library(dplyr); library(tidyr); library(ggplot2); library(patchwork)
 })
 data_file <- "data/GLD_lithic_data.xlsx"
 out_dir   <- "output"
@@ -20,58 +19,72 @@ if (!dir.exists(out_dir)) dir.create(out_dir)
 source("R/plot_style.R")
 
 cf <- read_excel(data_file, sheet = "Complete_flake"); names(cf) <- trimws(names(cf))
-fill_col <- "#6BA8CE"
 
-hist_panel <- function(aes_x, xlab, binwidth, boundary, data = cf) {
-  ggplot(data, aes({{ aes_x }})) +
-    geom_histogram(binwidth = binwidth, boundary = boundary,
-                   fill = fill_col, color = "#303238", linewidth = 0.25) +
-    scale_y_continuous(expand = expansion(mult = c(0, 0.08))) +
-    labs(x = xlab, y = "Count") + gld_theme
+# recode Toth type: Unicode Roman numerals (U+2160..U+2165) -> ASCII
+toth_lev  <- c("I", "II", "III", "IV", "V", "VI", "BOA")
+toth_keys <- c(intToUtf8(0x2160), intToUtf8(0x2161), intToUtf8(0x2162),
+               intToUtf8(0x2163), intToUtf8(0x2164), intToUtf8(0x2165), "BOA")
+toth_map  <- setNames(toth_lev, toth_keys)
+cf$Toth <- factor(unname(toth_map[cf$Toth_type]), levels = toth_lev)
+stopifnot(!any(is.na(cf$Toth)))
+
+toth_colors <- setNames(gld_qual[seq_along(toth_lev)], toth_lev)
+
+# --- boxplot panel (numeric ~ Toth): hollow box, colour only on points --------
+box_by_toth <- function(yvar, ylab, data = cf) {
+  ggplot(data, aes(Toth, {{ yvar }})) +
+    geom_boxplot(fill = NA, color = "black", linewidth = 0.45, width = 0.65,
+                 outlier.shape = NA) +
+    geom_jitter(aes(color = Toth), width = 0.18, height = 0, size = 1.2,
+                alpha = 0.75, shape = 16) +
+    stat_summary(fun = mean, geom = "point", shape = 18, size = 2, color = "black") +
+    scale_color_manual(values = toth_colors) +
+    scale_y_continuous(expand = expansion(mult = c(0.05, 0.08))) +
+    labs(x = "Toth type", y = ylab) +
+    gld_theme +
+    theme(legend.position = "none", panel.grid.major.x = element_blank())
 }
 
-# a. Cortex proportion
-p_cortex <- hist_panel(Cortex, "Cortex proportion", binwidth = 0.1, boundary = 0)
+p_cortex <- box_by_toth(Cortex,      "Cortex proportion")
+p_elong  <- box_by_toth(Elongation,  "Elongation (L/W)")
+p_ipa    <- box_by_toth(IPA,         "IPA (degrees)", data = filter(cf, !is.na(IPA)))
+p_ndsc   <- box_by_toth(n_dors_scar, "Dorsal scar count")
 
-# b. Elongation
-p_elong <- hist_panel(Elongation, "Elongation (L/W)", binwidth = 0.15, boundary = 0)
+# --- heatmaps (count of category x Toth) -------------------------------------
+heat_panel <- function(tab, xlab) {
+  ggplot(tab, aes(cat, Toth, fill = n)) +
+    geom_tile(color = "white", linewidth = 0.6) +
+    geom_text(aes(label = ifelse(n > 0, n, "")), size = 3, color = "#202124") +
+    scale_fill_gradient(low = "#EEF4F9", high = "#6BA8CE") +
+    scale_y_discrete(limits = rev(toth_lev)) +
+    scale_x_discrete(labels = function(x) gsub("_", " ", x)) +
+    labs(x = xlab, y = "Toth type") +
+    gld_theme +
+    theme(legend.position = "none", panel.grid = element_blank(),
+          axis.text.x = element_text(angle = 25, hjust = 1))
+}
 
-# c. IPA (drop structural NA)
-p_ipa <- hist_panel(IPA, "IPA (degrees)", binwidth = 5, boundary = 80,
-                    data = filter(cf, !is.na(IPA)))
+butt_lev <- c("Cortical", "Plain", "Linear", "Faceted", "Punctiform")
+butt_tab <- cf %>%
+  mutate(cat = factor(butt_type, levels = butt_lev)) %>%
+  count(Toth, cat) %>% complete(Toth, cat, fill = list(n = 0))
+p_butt <- heat_panel(butt_tab, "Butt type")
 
-# d. dorsal scar count (discrete)
-p_ndsc <- ggplot(cf, aes(factor(n_dors_scar))) +
-  geom_bar(fill = fill_col, color = "#303238", linewidth = 0.25, width = 0.8) +
-  scale_y_continuous(expand = expansion(mult = c(0, 0.08))) +
-  labs(x = "Dorsal scar count", y = "Count") +
-  gld_theme + theme(panel.grid.major.x = element_blank())
-
-# e. butt type (ordered)
-bt <- cf %>% count(butt_type) %>% mutate(butt_type = reorder(butt_type, -n))
-p_butt <- ggplot(bt, aes(butt_type, n)) +
-  geom_col(fill = fill_col, color = "#303238", linewidth = 0.25, width = 0.75) +
-  scale_y_continuous(expand = expansion(mult = c(0, 0.08))) +
-  labs(x = "Butt type", y = "Count") +
-  gld_theme + theme(panel.grid.major.x = element_blank(),
-                    axis.text.x = element_text(angle = 20, hjust = 1))
-
-# f. dorsal scar pattern (horizontal, ordered; NA -> Indeterminate)
-dsp <- cf %>%
+dsp_lev <- cf %>%
   mutate(dp = ifelse(is.na(Dorsal_scar_pattern), "Indeterminate", Dorsal_scar_pattern)) %>%
-  count(dp) %>% mutate(dp = reorder(dp, n))
-p_dsp <- ggplot(dsp, aes(n, dp)) +
-  geom_col(fill = fill_col, color = "#303238", linewidth = 0.25, width = 0.75) +
-  scale_x_continuous(expand = expansion(mult = c(0, 0.08))) +
-  scale_y_discrete(labels = function(x) gsub("_", " ", x)) +
-  labs(x = "Count", y = "Dorsal scar pattern") +
-  gld_theme + theme(panel.grid.major.y = element_blank())
+  count(dp) %>% arrange(desc(n)) %>% pull(dp)
+dsp_tab <- cf %>%
+  mutate(cat = factor(ifelse(is.na(Dorsal_scar_pattern), "Indeterminate",
+                             Dorsal_scar_pattern), levels = dsp_lev)) %>%
+  count(Toth, cat) %>% complete(Toth, cat, fill = list(n = 0))
+p_dsp <- heat_panel(dsp_tab, "Dorsal scar pattern")
 
 combo <- (p_cortex | p_elong) / (p_ipa | p_ndsc) / (p_butt | p_dsp) +
   plot_annotation(tag_levels = "a") &
   theme(plot.tag = element_text(face = "bold", size = 13))
 
 ggsave(file.path(out_dir, "fig_flake_tech_attributes.png"), combo,
-       width = 9.5, height = 9.5, dpi = 300)
+       width = 10, height = 10, dpi = 300)
 
-cat("Done. fig_flake_tech_attributes.png written (n =", nrow(cf), "complete flakes).\n")
+cat("Toth type counts:\n"); print(table(cf$Toth))
+cat("\nDone. fig_flake_tech_attributes.png written.\n")
