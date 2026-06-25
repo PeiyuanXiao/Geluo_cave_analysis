@@ -1,0 +1,105 @@
+================ (1) FLAKE tech_type (excl. Cortical_flake) ================
+n = 112  (L2: 28  L3: 84 )
+
+-- Full categories --
+
+Counts:
+                         
+                          Layer 2 Layer 3 Sum
+  Bipolar_flake                 0       7   7
+  Bipolar_on_anvil_flake        6       1   7
+  Centripetal_flake             1       1   2
+  Core_edge_removal_flake       1       0   1
+  Indeterminate_flake           0       2   2
+  Kombewa_type_flake            1       2   3
+  Orthogonal_flake              1       5   6
+  Perpendicular_flake           1       1   2
+  Unipolar_flake               17      65  82
+  Sum                          28      84 112
+
+Proportions within layer:
+                         
+                          Layer 2 Layer 3
+  Bipolar_flake             0.000   0.083
+  Bipolar_on_anvil_flake    0.214   0.012
+  Centripetal_flake         0.036   0.012
+  Core_edge_removal_flake   0.036   0.000
+  Indeterminate_flake       0.000   0.024
+  Kombewa_type_flake        0.036   0.024
+  Orthogonal_flake          0.036   0.060
+  Perpendicular_flake       0.036   0.012
+  Unipolar_flake            0.607   0.774
+
+Fisher's exact (Monte-Carlo, B=10000):  p = 0.0023 
+Cramer's V = 0.445 
+
+-- Collapsed: Unipolar / Bipolar / Other --
+
+Counts:
+          
+           Layer 2 Layer 3 Sum
+  Unipolar      17      65  82
+  Bipolar        6       8  14
+  Other          5      11  16
+  Sum           28      84 112
+
+Proportions within layer:
+          
+           Layer 2 Layer 3
+  Unipolar   0.607   0.774
+  Bipolar    0.214   0.095
+  Other      0.179   0.131
+
+Fisher's exact (Monte-Carlo, B=10000):  p = 0.1685 
+Cramer's V = 0.177 
+
+
+================ (2) CORE Typology ================
+n = 16  (L2: 9  L3: 7 )
+** n=16 — descriptive only; any test is severely underpowered. **
+
+-- Full categories --
+
+Counts:
+                          
+                           Layer 2 Layer 3 Sum
+  Bifacial_exploitation          4       4   8
+  Bipolar_on_anvil               1       0   1
+  Core_on_flake                  0       1   1
+  Initial_exploitation           0       1   1
+  Multifacial_exploitation       1       0   1
+  Unifacial_exploitation         3       1   4
+  Sum                            9       7  16
+
+Proportions within layer:
+                          
+                           Layer 2 Layer 3
+  Bifacial_exploitation      0.444   0.571
+  Bipolar_on_anvil           0.111   0.000
+  Core_on_flake              0.000   0.143
+  Initial_exploitation       0.000   0.143
+  Multifacial_exploitation   0.111   0.000
+  Unifacial_exploitation     0.333   0.143
+
+Fisher's exact (Monte-Carlo, B=10000):  p = 0.6423 
+Cramer's V = 0.549 
+
+-- Collapsed: Bifacial / Unifacial / Other --
+
+Counts:
+           
+            Layer 2 Layer 3 Sum
+  Bifacial        4       4   8
+  Unifacial       3       1   4
+  Other           2       2   4
+  Sum             9       7  16
+
+Proportions within layer:
+           
+            Layer 2 Layer 3
+  Bifacial    0.444   0.571
+  Unifacial   0.333   0.143
+  Other       0.222   0.286
+
+Fisher's exact (Monte-Carlo, B=10000):  p = 0.8251 
+Cramer's V = 0.218 

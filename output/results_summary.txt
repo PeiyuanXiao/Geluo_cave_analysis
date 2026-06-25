@@ -1,0 +1,92 @@
+Total artifacts: 336 
+By layer:
+
+Layer 2 Layer 3 
+    104     232 
+
+
+=========== A. RAW-MATERIAL COMPOSITION ===========
+
+Counts:
+          
+           Layer 2 Layer 3 Sum
+  Spilite       26     109 135
+  Quartz        53      20  73
+  Andesite       9      53  62
+  Chert          4      37  41
+  Granite        5       5  10
+  Other          7       8  15
+  Sum          104     232 336
+
+Column proportions (within layer):
+          
+           Layer 2 Layer 3
+  Spilite    0.250   0.470
+  Quartz     0.510   0.086
+  Andesite   0.087   0.228
+  Chert      0.038   0.159
+  Granite    0.048   0.022
+  Other      0.067   0.034
+
+Chi-square (Monte-Carlo, B=10000): X2 = 87.78  p = 9.999e-05 
+Cramer's V = 0.511 
+
+Standardized residuals (|z|>2 ~ notable):
+          
+           Layer 2 Layer 3
+  Spilite    -3.80    3.80
+  Quartz      8.70   -8.70
+  Andesite   -3.10    3.10
+  Chert      -3.13    3.13
+  Granite     1.32   -1.32
+  Other       1.35   -1.35
+
+
+=========== B. SIZE (complete flakes) ===========
+
+  Variable n_L2 n_L3 median_L2 median_L3 mean_L2 mean_L3 shapiro_L2 shapiro_L3
+    Length   28   90     29.75     28.85   30.11   30.35   2.71e-01   1.70e-02
+     Width   28   90     27.85     25.45   28.50   27.70   1.04e-01   1.34e-05
+ Thickness   28   90      8.15      8.20   10.33    9.10   1.45e-05   1.46e-05
+      Mass   28   90      4.47      5.12   12.07    9.48   1.66e-08   1.12e-15
+  p_MWU p_Welch cliff_delta  magnitude p_MWU_holm
+ 0.7184  0.9304      -0.046 negligible          1
+ 0.7929  0.7734       0.033 negligible          1
+ 0.4611  0.3668       0.093 negligible          1
+ 0.7255  0.5407       0.044 negligible          1
+
+(cliff_delta > 0 means Layer 2 larger; Holm correction over the 4 tests)
+
+
+=========== C. TYPE / CLASS COMPOSITION ===========
+
+Counts:
+                
+                 Layer 2 Layer 3 Sum
+  Core                 9       7  16
+  Complete_flake      28      90 118
+  Broken_flake         5      39  44
+  Tool                 3       5   8
+  Chunk               59      91 150
+  Sum                104     232 336
+
+Column proportions (within layer):
+                
+                 Layer 2 Layer 3
+  Core             0.087   0.030
+  Complete_flake   0.269   0.388
+  Broken_flake     0.048   0.168
+  Tool             0.029   0.022
+  Chunk            0.567   0.392
+
+Chi-square (Monte-Carlo, B=10000): X2 = 20.66  p = 4e-04 
+Cramer's V = 0.248 
+
+Standardized residuals (|z|>2 ~ notable):
+                
+                 Layer 2 Layer 3
+  Core              2.24   -2.24
+  Complete_flake   -2.11    2.11
+  Broken_flake     -3.02    3.02
+  Tool              0.41   -0.41
+  Chunk             2.98   -2.98
