@@ -21,6 +21,7 @@ suppressPackageStartupMessages({
   library(readxl); library(dplyr); library(tidyr); library(ggplot2)
   library(FactoMineR); library(factoextra)
   library(cluster); library(vegan)
+  library(patchwork); library(ggrepel)
 })
 set.seed(42)
 data_file <- "data/GLD_lithic_data.xlsx"
@@ -96,13 +97,22 @@ ggsave(file.path(out_dir, "fig_famd_scree.png"),
 # individuals ordination (hulls + spokes + centroids)
 scores <- data.frame(Dim1 = res$ind$coord[, 1], Dim2 = res$ind$coord[, 2],
                      Group = dat$Layer)
-ggsave(file.path(out_dir, "fig_famd_ind_layer.png"),
-       gld_ordination(scores,
-                      xlab = paste0("Dim.1 (", v1, "%)"),
-                      ylab = paste0("Dim.2 (", v2, "%)"),
-                      title = "Complete flakes in FAMD space",
-                      subtitle = "Layer projected as supplementary variable"),
+p_ind_layer <- gld_ordination(scores,
+                              xlab = paste0("Dim.1 (", v1, "%)"),
+                              ylab = paste0("Dim.2 (", v2, "%)"),
+                              title = "Complete flakes in FAMD space",
+                              subtitle = "Layer projected as supplementary variable")
+ggsave(file.path(out_dir, "fig_famd_ind_layer.png"), p_ind_layer,
        width = 7.0, height = 5.6, dpi = 300)
+
+# quantitative variable coordinates (native correlation circle, house style)
+qc <- as.data.frame(res$quanti.var$coord[, 1:2])
+qc <- data.frame(Variable = rownames(qc), Dim1 = qc[, 1], Dim2 = qc[, 2])
+p_quanti <- gld_corr_circle(qc,
+                            xlab = paste0("Dim.1 (", v1, "%)"),
+                            ylab = paste0("Dim.2 (", v2, "%)"))
+ggsave(file.path(out_dir, "fig_famd_quanti.png"), p_quanti,
+       width = 5.2, height = 5.2, dpi = 300)
 
 # quantitative variable coordinates (loading bars)
 qc <- as.data.frame(res$quanti.var$coord[, 1:2])
@@ -118,19 +128,61 @@ ct <- data.frame(Variable = rownames(res$var$contrib),
 ggsave(file.path(out_dir, "fig_famd_contrib.png"), gld_contrib(ct),
        width = 6.4, height = 4.4, dpi = 300)
 
-# qualitative category coordinates
+# qualitative category coordinates (coloured & shaped by their parent variable)
 qv <- as.data.frame(res$quali.var$coord[, 1:2])
 qv <- data.frame(Dim1 = qv[, 1], Dim2 = qv[, 2], Cat = rownames(qv))
-p_quali <- ggplot(qv, aes(Dim1, Dim2)) +
+qv$Variable <- ifelse(qv$Cat %in% levels(dat$butt_type),
+                      "Butt type", "Dorsal scar pattern")
+p_quali <- ggplot(qv, aes(Dim1, Dim2, color = Variable, shape = Variable)) +
   geom_hline(yintercept = 0, linetype = "dashed", linewidth = 0.4) +
   geom_vline(xintercept = 0, linetype = "dashed", linewidth = 0.4) +
-  geom_point(color = "#6BA8CE", size = 2.6) +
-  geom_text(aes(label = gsub("_", " ", Cat)), size = 3, vjust = -0.7,
-            color = "#303238", check_overlap = TRUE) +
-  labs(subtitle = "Qualitative category coordinates",
-       x = paste0("Dim.1 (", v1, "%)"), y = paste0("Dim.2 (", v2, "%)")) +
+  geom_point(size = 2.8, alpha = 0.9) +
+  ggrepel::geom_text_repel(aes(label = gsub("_", " ", Cat)),
+                           size = 3, color = "#303238", show.legend = FALSE,
+                           segment.color = "#B8BCC2", segment.size = 0.3,
+                           min.segment.length = 0,
+                           box.padding = 0.55, point.padding = 0.3,
+                           force = 2.5, force_pull = 0.4,
+                           max.overlaps = Inf, max.iter = 100000,
+                           max.time = 1, seed = 42) +
+  scale_color_manual(values = gld_qvar) +
+  scale_shape_manual(values = c("Butt type" = 16, "Dorsal scar pattern" = 17)) +
+  scale_x_continuous(expand = expansion(mult = 0.16)) +
+  scale_y_continuous(expand = expansion(mult = 0.13)) +
+  labs(x = paste0("Dim.1 (", v1, "%)"), y = paste0("Dim.2 (", v2, "%)"),
+       color = "Variable", shape = "Variable") +
   gld_theme
 ggsave(file.path(out_dir, "fig_famd_quali.png"), p_quali,
-       width = 7.0, height = 5.2, dpi = 300)
+       width = 7.0, height = 5.6, dpi = 300)
+
+# ---- combined figure (unified house style, tagged (a)/(b)/(c)) --------------
+xlab_d <- paste0("Dim.1 (", v1, "%)")
+ylab_d <- paste0("Dim.2 (", v2, "%)")
+
+# (a) individuals — fill panel width (no forced square) so it lines up with the
+#     bottom row; Layer legend moved INSIDE the top-left of the coordinate box.
+# Panel tags a/b/c are added ONCE below via patchwork (uniform top-left corner),
+# so legends are moved to the top-right corner to keep that corner clear.
+pA <- gld_ordination(scores, xlab = xlab_d, ylab = ylab_d,
+                     equal_aspect = FALSE) +
+  gld_legend_inside(pos = c(0.985, 0.985), just = c(1, 1))
+
+# (b) quantitative variables — correlation circle; equal_aspect = FALSE so the
+#     panel fills its cell and lines up (box size + height) with panel (c).
+pB <- gld_corr_circle(qc, xlab = xlab_d, ylab = ylab_d, equal_aspect = FALSE)
+
+# (c) qualitative categories — coloured/shaped by variable; legend top-right so it
+#     clears the bottom-left label cluster and mirrors panel (a)'s legend corner.
+pC <- p_quali +
+  gld_legend_inside(pos = c(0.985, 0.985), just = c(1, 1))
+
+bottom <- (pB | pC) + plot_layout(widths = c(1, 1))
+p_famd_combined <- (pA / bottom) +
+  plot_layout(heights = c(1.1, 1)) +
+  plot_annotation(tag_levels = "a") &
+  theme(plot.margin = margin(4, 6, 4, 6),
+        plot.tag = element_text(face = "bold", size = 13, color = "#202124"))
+ggsave(file.path(out_dir, "fig_famd_combined.png"), p_famd_combined,
+       width = 10.5, height = 11.0, dpi = 300)
 
 cat("\nDone. See output/famd_summary.txt and fig_famd_*.png\n")
