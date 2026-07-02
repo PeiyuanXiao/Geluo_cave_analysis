@@ -1,14 +1,4 @@
-# =============================================================================
-# Geluo Cave (GLD) — Complete-flake technological attributes BY Toth type
-# x-axis = Toth_type (recoded from Unicode Roman numerals U+2160-2165 to I-VI;
-#          BOA = bipolar-on-anvil). Composite of 6 panels, colour mapped to type.
-#   numeric (Elongation, IPA, n_dors_scar)                   -> boxplot + jitter + mean
-#   categorical (Cortex_loc, butt_type, Dorsal_scar_pattern) -> count heatmaps
-# NOTE: Toth type is defined by platform + dorsal cortex, so the Cortex_loc and
-#       butt_type panels are largely circular (they re-express the definition);
-#       Elongation / IPA / n_dors_scar / Dorsal_scar_pattern are the informative
-#       contrasts. No titles/subtitles (house rule).
-# =============================================================================
+# GLD complete-flake technological attributes by Toth type: 6-panel composite.
 
 suppressPackageStartupMessages({
   library(readxl); library(dplyr); library(tidyr); library(ggplot2); library(patchwork)
@@ -20,7 +10,7 @@ source("R/plot_style.R")
 
 cf <- read_excel(data_file, sheet = "Complete_flake"); names(cf) <- trimws(names(cf))
 
-# recode Toth type: Unicode Roman numerals (U+2160..U+2165) -> ASCII
+# recode Toth type: Unicode Roman numerals (U+2160..U+2165) -> ASCII; BOA appended
 toth_lev  <- c("I", "II", "III", "IV", "V", "VI", "BOA")
 toth_keys <- c(intToUtf8(0x2160), intToUtf8(0x2161), intToUtf8(0x2162),
                intToUtf8(0x2163), intToUtf8(0x2164), intToUtf8(0x2165), "BOA")
@@ -28,9 +18,10 @@ toth_map  <- setNames(toth_lev, toth_keys)
 cf$Toth <- factor(unname(toth_map[cf$Toth_type]), levels = toth_lev)
 stopifnot(!any(is.na(cf$Toth)))
 
-toth_colors <- setNames(gld_qual[seq_along(toth_lev)], toth_lev)
+# ordered viridis gradient for I-VI; BOA (separate technology) gets a warm swatch
+toth_seq    <- c("#482878", "#3E4A89", "#31688E", "#21908C", "#35B779", "#90D743")
+toth_colors <- setNames(c(toth_seq, "#D9A07A"), toth_lev)
 
-# --- boxplot panel (numeric ~ Toth): hollow box, colour only on points --------
 box_by_toth <- function(yvar, ylab, data = cf) {
   box_width <- 0.65
   ggplot(data, aes(Toth, {{ yvar }})) +
@@ -51,49 +42,62 @@ p_elong  <- box_by_toth(Elongation,  "Elongation (L/W)")
 p_ipa    <- box_by_toth(IPA,         "IPA (degrees)", data = filter(cf, !is.na(IPA)))
 p_ndsc   <- box_by_toth(n_dors_scar, "Dorsal scar count")
 
-# --- bubble panels (count of category x Toth) --------------------------------
-bubble_panel <- function(tab, xlab) {
+# count of category x Toth; x = Toth, y = category (first level at top, labels right)
+bubble_panel <- function(tab) {
   max_count <- max(tab$n, na.rm = TRUE)
+  cat_lev   <- levels(tab$cat)
 
-  ggplot(tab, aes(cat, Toth)) +
+  ggplot(tab, aes(Toth, cat)) +
     geom_point(data = filter(tab, n > 0), aes(fill = n),
                shape = 21, size = 7.5, color = "grey25", stroke = 0.25,
                alpha = 0.95) +
     geom_text(aes(label = ifelse(n > 0, n, "")), size = 3, color = "#202124") +
     scale_fill_gradient(low = "#EEF4F9", high = "#6BA8CE",
                         limits = c(0, max_count)) +
-    scale_y_discrete(limits = rev(toth_lev)) +
-    scale_x_discrete(labels = function(x) gsub("_", " ", x)) +
-    labs(x = xlab, y = "Toth type") +
+    scale_x_discrete(limits = toth_lev) +
+    scale_y_discrete(limits = rev(cat_lev), position = "right",
+                     labels = function(x) gsub("_", " ", x)) +
+    labs(x = "Toth type", y = NULL) +
     gld_theme +
     theme(legend.position = "none",
           panel.grid.major = element_line(color = "#E6E6E6", linewidth = 0.3),
           panel.grid.minor = element_blank(),
-          axis.text.x = element_text(angle = 25, hjust = 1))
+          axis.text.y.right = element_text(hjust = 0))
 }
 
-cloc_lev <- cf %>% count(Cortex_loc) %>% arrange(desc(n)) %>% pull(Cortex_loc)
+# category order = top-to-bottom on the y-axis (Central/Primary swapped)
+cloc_lev <- c("Tertiary", "Crescent", "Distal", "Central", "Primary")
 cloc_tab <- cf %>%
   mutate(cat = factor(Cortex_loc, levels = cloc_lev)) %>%
   count(Toth, cat) %>% complete(Toth, cat, fill = list(n = 0))
-p_cloc <- bubble_panel(cloc_tab, "Cortex location")
+p_cloc <- bubble_panel(cloc_tab)
 
-butt_lev <- c("Cortical", "Plain", "Linear", "Faceted", "Punctiform")
+# Platform type (Faceted/Linear swapped)
+butt_lev <- c("Cortical", "Plain", "Faceted", "Linear", "Punctiform")
 butt_tab <- cf %>%
   mutate(cat = factor(butt_type, levels = butt_lev)) %>%
   count(Toth, cat) %>% complete(Toth, cat, fill = list(n = 0))
-p_butt <- bubble_panel(butt_tab, "Butt type")
+p_butt <- bubble_panel(butt_tab)
 
-dsp_lev <- cf %>%
-  mutate(dp = ifelse(is.na(Dorsal_scar_pattern), "Indeterminate", Dorsal_scar_pattern)) %>%
-  count(dp) %>% arrange(desc(n)) %>% pull(dp)
+# NA -> Indeterminate; explicit category order
+dsp_lev <- c("Cortex", "Unidirectional_proximal", "Bidirectional_opposite",
+             "Lateral", "Orthogonal", "Multidirectional", "Centripetal",
+             "Kombewa", "Indeterminate")
 dsp_tab <- cf %>%
   mutate(cat = factor(ifelse(is.na(Dorsal_scar_pattern), "Indeterminate",
                              Dorsal_scar_pattern), levels = dsp_lev)) %>%
   count(Toth, cat) %>% complete(Toth, cat, fill = list(n = 0))
-p_dsp <- bubble_panel(dsp_tab, "Dorsal scar pattern")
+p_dsp <- bubble_panel(dsp_tab)
 
-combo <- (p_elong | p_ipa) / (p_ndsc | p_cloc) / (p_butt | p_dsp) +
+# x title only on the bottom row (c, f)
+p_elong <- p_elong + labs(x = NULL)
+p_ipa   <- p_ipa   + labs(x = NULL)
+p_cloc  <- p_cloc  + labs(x = NULL)
+p_butt  <- p_butt  + labs(x = NULL)
+
+# left column = boxplots (a-c), right column = bubbles (d-f); byrow=FALSE = column-first
+combo <- wrap_plots(list(p_elong, p_ipa, p_ndsc, p_cloc, p_butt, p_dsp),
+                    ncol = 2, byrow = FALSE) +
   plot_annotation(tag_levels = "a") &
   theme(plot.tag = element_text(face = "bold", size = 13))
 

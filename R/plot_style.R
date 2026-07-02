@@ -1,22 +1,12 @@
-# =============================================================================
-# Shared plotting house-style for the GLD analyses.
-# Aesthetic ported from the Quina-valleys reference script:
-#   minimal theme + boxed panel, centroid/hull/spoke ordinations,
-#   sign-coloured loading bars, jittered boxplots.
-# Source this AFTER loading dplyr, tidyr, ggplot2.
-# =============================================================================
+# Shared plotting house-style for the GLD analyses. Source after dplyr/tidyr/ggplot2.
 
-# --- palette (Layer 2 / Layer 3) ---------------------------------------------
 gld_colors <- c("Layer 2" = "#E07C90", "Layer 3" = "#6BA8CE")
 gld_sign   <- c(Positive = "#6BA8CE", Negative = "#E07C90")
-# soft qualitative palette for multi-category composition bars
 gld_qual <- c("#E07C90", "#6BA8CE", "#E6C25C", "#8FBF9F", "#B79BC9",
               "#D9A07A", "#7FBDBD", "#A7C7E7", "#C9C9C9", "#D7B8A3")
-# colours for the two qualitative ACTIVE variables in the FAMD category map
-# (deliberately NOT the Layer pink/blue, to avoid confusion with the top panel)
+# qualitative active variables in the FAMD category map (not the Layer pink/blue)
 gld_qvar <- c("Butt type" = "#5E9B6B", "Dorsal scar pattern" = "#8E6FB0")
 
-# --- theme -------------------------------------------------------------------
 gld_theme <- theme_minimal(base_size = 13) +
   theme(
     panel.grid.major = element_line(color = "#E6E8EB", linewidth = 0.35),
@@ -37,8 +27,7 @@ gld_theme <- theme_minimal(base_size = 13) +
     panel.background = element_rect(color = NA, fill = "white")
   )
 
-# --- ordination: hulls + spokes-to-centroid + centroid markers ---------------
-# `scores` must have columns: Dim1, Dim2, Group
+# ordination with hulls + spokes-to-centroid + centroids; scores: Dim1, Dim2, Group
 gld_ordination <- function(scores, xlab, ylab, title = NULL, subtitle = NULL,
                            colors = gld_colors, legend_title = "Layer",
                            equal_aspect = TRUE) {
@@ -77,13 +66,10 @@ gld_ordination <- function(scores, xlab, ylab, title = NULL, subtitle = NULL,
     gld_theme +
     guides(fill = "none",
            color = guide_legend(override.aes = list(size = 3.2, alpha = 1, shape = 16)))
-  # equal_aspect = TRUE keeps the ordination honest (square); FALSE lets the
-  # panel fill its cell width so it lines up with the row below it.
   if (equal_aspect) p + coord_equal() else p + coord_cartesian()
 }
 
-# --- variable loadings (sign-coloured horizontal bars, faceted by Dim) -------
-# `coord` must have columns: Variable, Dim1, Dim2
+# sign-coloured loading bars faceted by Dim; coord: Variable, Dim1, Dim2
 gld_loadings <- function(coord, var_levels, subtitle = "Variable coordinates") {
   long <- coord |>
     tidyr::pivot_longer(c(Dim1, Dim2), names_to = "Dim", values_to = "Loading") |>
@@ -104,8 +90,7 @@ gld_loadings <- function(coord, var_levels, subtitle = "Variable coordinates") {
     theme(panel.grid.major.y = element_blank(), legend.position = "top")
 }
 
-# --- variable contribution bars (to Dim.1 + Dim.2) ---------------------------
-# `df` must have columns: Variable, contrib
+# variable contribution bars; df: Variable, contrib
 gld_contrib <- function(df, subtitle = "Variable contribution to Dim.1 + Dim.2 (%)") {
   df <- dplyr::mutate(df, Variable = reorder(Variable, contrib))
   ggplot(df, aes(contrib, Variable)) +
@@ -117,7 +102,7 @@ gld_contrib <- function(df, subtitle = "Variable contribution to Dim.1 + Dim.2 (
     theme(panel.grid.major.y = element_blank())
 }
 
-# --- scree (variance explained) ----------------------------------------------
+# scree / variance explained
 gld_scree <- function(eig, ndim = 8, subtitle = "Variance explained") {
   k <- min(ndim, nrow(eig))
   d <- data.frame(
@@ -133,16 +118,14 @@ gld_scree <- function(eig, ndim = 8, subtitle = "Variance explained") {
     theme(panel.grid.major.x = element_blank())
 }
 
-# --- panel label / subtitle (gld_theme blanks subtitle by default) -----------
-# Add to a plot to show a left-aligned bold panel label, e.g. "(a) Individuals".
+# left-aligned bold panel subtitle (gld_theme blanks subtitle by default)
 gld_panel_subtitle <- theme(
   plot.subtitle = element_text(face = "bold", size = 11.5, hjust = 0,
                                color = "#202124", margin = margin(b = 5)),
   plot.title.position = "plot"
 )
 
-# --- put a legend INSIDE the panel (version-safe for ggplot2 3.4 / 3.5+) ------
-# pos / just are npc coords & justification, e.g. top-left = c(0,1)/c(0,1).
+# legend inside the panel; pos/just are npc coords & justification (version-safe)
 gld_legend_inside <- function(pos = c(0.02, 0.98), just = c(0, 1),
                               direction = "vertical") {
   base <- theme(
@@ -164,20 +147,15 @@ gld_legend_inside <- function(pos = c(0.02, 0.98), just = c(0, 1),
   }
 }
 
-# --- correlation circle for quantitative variables (house style) -------------
-# Native replacement for factoextra::fviz_famd_var(); keeps the same look as
-# the other panels. `coord` needs columns: Variable, Dim1, Dim2 (corr in [-1,1]).
+# correlation circle for quantitative variables; coord: Variable, Dim1, Dim2
 gld_corr_circle <- function(coord, xlab, ylab, subtitle = NULL,
                             arrow_color = "#303238", equal_aspect = TRUE) {
   circ <- data.frame(a = seq(0, 2 * pi, length.out = 240))
   circ$x <- cos(circ$a); circ$y <- sin(circ$a)
-  # nudge each label a touch outward along its own vector, then let ggrepel
-  # resolve the rest — this stops the clustered short vectors (Width /
-  # n_dors_scar / logMass / Thickness) from stacking their labels together.
   rr  <- sqrt(coord$Dim1^2 + coord$Dim2^2)
   nx  <- ifelse(rr > 1e-6, coord$Dim1 / rr, 0) * 0.10
   ny  <- ifelse(rr > 1e-6, coord$Dim2 / rr, 0) * 0.10
-  lim <- if (equal_aspect) 1.12 else 1.22   # extra room for labels when clip is on
+  lim <- if (equal_aspect) 1.12 else 1.22
   p <- ggplot(coord, aes(Dim1, Dim2)) +
     geom_path(data = circ, aes(x, y), inherit.aes = FALSE,
               color = "#B8BCC2", linewidth = 0.5) +
@@ -199,9 +177,5 @@ gld_corr_circle <- function(coord, xlab, ylab, subtitle = NULL,
     scale_y_continuous(limits = c(-lim, lim), breaks = seq(-1, 1, 0.5)) +
     labs(x = xlab, y = ylab, subtitle = subtitle) +
     gld_theme
-  # equal_aspect = TRUE: true circle for the standalone figure; clip = "off" so
-  # labels may sit just outside the axis range. FALSE: fill the grid cell AND use
-  # the default clip so the panel border renders at the SAME weight as the other
-  # panels (clip = "off" draws the full border line and looks a notch heavier).
   if (equal_aspect) p + coord_equal(clip = "off") else p + coord_cartesian()
 }
