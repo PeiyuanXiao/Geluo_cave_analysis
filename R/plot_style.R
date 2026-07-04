@@ -5,7 +5,7 @@ gld_sign   <- c(Positive = "#6BA8CE", Negative = "#E07C90")
 gld_qual <- c("#E07C90", "#6BA8CE", "#E6C25C", "#8FBF9F", "#B79BC9",
               "#D9A07A", "#7FBDBD", "#A7C7E7", "#C9C9C9", "#D7B8A3")
 # qualitative active variables in the FAMD category map (not the Layer pink/blue)
-gld_qvar <- c("Butt type" = "#5E9B6B", "Dorsal scar pattern" = "#8E6FB0")
+gld_qvar <- c("Platform type" = "#5E9B6B", "Dorsal scar pattern" = "#8E6FB0")
 
 gld_theme <- theme_minimal(base_size = 13) +
   theme(
@@ -149,7 +149,8 @@ gld_legend_inside <- function(pos = c(0.02, 0.98), just = c(0, 1),
 
 # correlation circle for quantitative variables; coord: Variable, Dim1, Dim2
 gld_corr_circle <- function(coord, xlab, ylab, subtitle = NULL,
-                            arrow_color = "#303238", equal_aspect = TRUE) {
+                            arrow_color = "#303238", equal_aspect = TRUE,
+                            label_size = 3.3) {
   circ <- data.frame(a = seq(0, 2 * pi, length.out = 240))
   circ$x <- cos(circ$a); circ$y <- sin(circ$a)
   rr  <- sqrt(coord$Dim1^2 + coord$Dim2^2)
@@ -165,7 +166,7 @@ gld_corr_circle <- function(coord, xlab, ylab, subtitle = NULL,
                  arrow = grid::arrow(length = grid::unit(7, "pt"), type = "closed"),
                  color = arrow_color, linewidth = 0.55) +
     ggrepel::geom_text_repel(aes(label = gsub("_", " ", Variable)),
-                             color = "#303238", size = 3.3,
+                             color = "#303238", size = label_size,
                              segment.color = "#B8BCC2", segment.size = 0.3,
                              min.segment.length = 0,
                              box.padding = 0.7, point.padding = 0.35,

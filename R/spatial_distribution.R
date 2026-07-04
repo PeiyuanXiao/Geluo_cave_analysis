@@ -21,27 +21,35 @@ coord <- coord %>%
     X      = as.numeric(x),
     Y      = as.numeric(y),
     Z      = as.numeric(z),
-    Type   = trimws(as.character(Type))
+    Type   = factor(trimws(as.character(Type)),
+                    levels = c("Stone_artifact", "Fossil"))
   ) %>%
   filter(!is.na(ID), !is.na(X), !is.na(Y), !is.na(Z)) %>%
   arrange(Trench)
 
-# stone artifacts only (drops 21 fossils); map shape = Type to include them
-artifacts <- coord %>% filter(Type == "Stone_artifact")
+# plot every find; shape encodes Type (stone artifact vs fossil), fill encodes Trench
+finds <- coord
 
 trench_colors <- c("T1" = "#FFC9C9", "T2" = "#B8E6FE", "T3" = "#D8F5A2")
+# fillable shapes so the Trench fill colour still shows: circle = artifact, triangle = fossil
+type_shapes <- c("Stone_artifact" = 21, "Fossil" = 24)
+type_labels <- c("Stone_artifact" = "Stone artifact", "Fossil" = "Fossil")
 
 plot_plan <- function(df, title = NULL) {
   xr <- range(df$X, na.rm = TRUE)
   yr <- range(df$Y, na.rm = TRUE)
-  ggplot(df, aes(X, Y, fill = Trench)) +
-    geom_point(shape = 21, size = 2.5, color = "gray30", stroke = 0.5) +
+  ggplot(df, aes(X, Y, fill = Trench, shape = Type)) +
+    geom_point(size = 2.5, color = "gray30", stroke = 0.5) +
     scale_fill_manual(values = trench_colors) +
+    scale_shape_manual(values = type_shapes, labels = type_labels) +
     scale_x_continuous(breaks = seq(floor(xr[1]), ceiling(xr[2]), by = 1)) +
     scale_y_continuous(breaks = seq(floor(yr[1]), ceiling(yr[2]), by = 1)) +
     coord_fixed() +
     theme_bw() +
-    labs(title = title, x = "X (m)", y = "Y (m)", fill = "Trench") +
+    labs(title = title, x = "X (m)", y = "Y (m)",
+         fill = "Trench", shape = "Type") +
+    guides(fill  = guide_legend(override.aes = list(shape = 21)),
+           shape = guide_legend(override.aes = list(fill = "gray70"))) +
     theme(panel.grid.minor = element_blank(), legend.position = "right")
 }
 
@@ -49,20 +57,23 @@ plot_plan <- function(df, title = NULL) {
 plot_profile <- function(df, horiz = "X", title = NULL) {
   hr <- range(df[[horiz]], na.rm = TRUE)
   zr <- range(df$Z, na.rm = TRUE)
-  ggplot(df, aes(.data[[horiz]], Z, fill = Trench)) +
-    geom_point(shape = 21, size = 2.5, color = "gray30", stroke = 0.5) +
+  ggplot(df, aes(.data[[horiz]], Z, fill = Trench, shape = Type)) +
+    geom_point(size = 2.5, color = "gray30", stroke = 0.5) +
     scale_fill_manual(values = trench_colors) +
+    scale_shape_manual(values = type_shapes, labels = type_labels) +
     scale_x_continuous(breaks = seq(floor(hr[1]), ceiling(hr[2]), by = 1)) +
     scale_y_continuous(breaks = seq(floor(zr[1]), ceiling(zr[2]), by = 0.5)) +
     coord_fixed() +
     theme_bw() +
     labs(title = title, x = paste0(horiz, " (m)"),
-         y = "Elevation (m a.s.l.)", fill = "Trench") +
+         y = "Elevation (m a.s.l.)", fill = "Trench", shape = "Type") +
+    guides(fill  = guide_legend(override.aes = list(shape = 21)),
+           shape = guide_legend(override.aes = list(fill = "gray70"))) +
     theme(panel.grid.minor = element_blank(), legend.position = "right")
 }
 
-p_plan    <- plot_plan(artifacts,    title = "GLD - Plan view")
-p_profile <- plot_profile(artifacts, horiz = "X", title = "GLD - Profile (X-Z)")
+p_plan    <- plot_plan(finds,    title = "GLD - Plan view")
+p_profile <- plot_profile(finds, horiz = "X", title = "GLD - Profile (X-Z)")
 
 ggsave(file.path(out_dir, "fig_spatial_plan.png"), p_plan,
        width = 8, height = 7, dpi = 300, bg = "white")
