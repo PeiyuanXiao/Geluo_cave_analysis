@@ -74,7 +74,7 @@ cd Geluo_cave_analysis
 Open `Geluo_cave_analysis.Rproj` in RStudio, then:
 
 ``` r
-renv::restore()                      # the package versions in renv.lock
+renv::restore()                 
 
 source("R/famd_flakes.R")
 source("R/flake_tech_attributes.R")
@@ -83,16 +83,12 @@ source("R/boxplot_by_type.R")
 source("R/spatial_distribution.R")
 ```
 
-The five scripts are independent of one another and can be run in any order. Each overwrites its own figures in `output/`.
-
-**The two newest scripts are not yet part of this.** `ET_WT_SR_NPP_analysis.R` reads the pastclim monthly climate reconstructions, which are not in this repository, and a decimal-degree copy of the site coordinates (`site_date_clean.csv`), both from absolute paths on the machine it was written on, and saves its twelve maps there as well. It also downloads the Natural Earth river lines, so it needs a network connection. Its packages are in `renv.lock` with the rest. `Site Occupation Periods and Stone Artifact Counts.R` runs as it is, but draws its figure in the plot window without saving it to `output/`.
-
 ------------------------------------------------------------------------
 
 ### 📊 Outputs
 
 | Output | Script | Description |
-|----|----|----|
+|------------------------|------------------------|------------------------|
 | `fig_famd_combined.png` | `famd_flakes.R` | FAMD of complete flakes: individuals by layer, variable correlation circle, and category map. |
 | `fig_flake_tech_attributes.png` | `flake_tech_attributes.R` | Technological attributes of complete flakes by Toth type (elongation, IPA, dorsal scar count + composition bubbles). |
 | `fig_flake_tech_attributes_stacked.png` | `flake_tech_attributes_stacked.R` | Same attributes with stacked-bar composition panels. |
