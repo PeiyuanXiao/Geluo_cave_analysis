@@ -2,8 +2,8 @@
 # x = 东坐标 (east), y = 北坐标 (north), z = elevation (m a.s.l.).
 # Trenches are re-labelled by spatial cluster from the source ID (not the sheet's
 # Trench column): 2022YWT -> T1; 24GLD_T1/T2 (SE cluster) -> T3;
-# 24GLD_1/2/4 (NW cluster) -> T2. Both plan axes are reversed so T1 plots at lower-
-# left with T2 to the east and T3 to the north (matches the excavation description).
+# 24GLD_1/2/4 (NW cluster) -> T2. Axes are in normal orientation (X = east
+# increasing right, Y = north increasing up).
 
 suppressPackageStartupMessages({
   library(readxl); library(dplyr); library(ggplot2); library(patchwork)
@@ -48,8 +48,8 @@ plot_plan <- function(df, title = NULL) {
     geom_point(size = 2.5, color = "gray30", stroke = 0.5) +
     scale_fill_manual(values = trench_colors) +
     scale_shape_manual(values = type_shapes, labels = type_labels) +
-    scale_x_reverse(breaks = seq(floor(xr[1]), ceiling(xr[2]), by = 1)) +
-    scale_y_reverse(breaks = seq(floor(yr[1]), ceiling(yr[2]), by = 1)) +
+    scale_x_continuous(breaks = seq(floor(xr[1]), ceiling(xr[2]), by = 1)) +
+    scale_y_continuous(breaks = seq(floor(yr[1]), ceiling(yr[2]), by = 1)) +
     coord_fixed() +
     theme_bw() +
     labs(x = "X (m)", y = "Y (m)",
@@ -67,7 +67,7 @@ plot_profile <- function(df, horiz = "X", title = NULL) {
     geom_point(size = 2.5, color = "gray30", stroke = 0.5) +
     scale_fill_manual(values = trench_colors) +
     scale_shape_manual(values = type_shapes, labels = type_labels) +
-    scale_x_reverse(breaks = seq(floor(hr[1]), ceiling(hr[2]), by = 1)) +
+    scale_x_continuous(breaks = seq(floor(hr[1]), ceiling(hr[2]), by = 1)) +
     scale_y_continuous(breaks = seq(floor(zr[1]), ceiling(zr[2]), by = 0.5)) +
     coord_fixed() +
     theme_bw() +

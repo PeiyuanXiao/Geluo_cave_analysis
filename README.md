@@ -4,92 +4,92 @@
 
 <hr />
 
-[![Project Status: Active](https://www.repostatus.org/badges/latest/active.svg)](https://www.repostatus.org/#active) [![R 4.5.2](https://img.shields.io/badge/R-4.5.2-blue.svg)](https://www.r-project.org/)
+[![Project Status: WIP](https://www.repostatus.org/badges/latest/wip.svg)](https://www.repostatus.org/#wip) [![Licenses: MIT + CC BY 4.0 + CC0](https://img.shields.io/badge/Licenses-MIT%20%2B%20CC--BY--4.0%20%2B%20CC0-lightgrey.svg)](LICENSE.md) [![R 4.6.1](https://img.shields.io/badge/R-4.6.1-blue.svg)](https://www.r-project.org/)
 
-This repository contains the data and R code used to reproduce the lithic analysis figures for the Geluo Cave (GLD; 各洛洞) assemblage from the southeastern Tibetan Plateau.
+This repository contains the data and code for our manuscript, **in preparation**:
 
-The compendium is organized so that reviewers can run the analysis from the project root and regenerate all figures in `output/`.
+> **Ruan, QJ., Wei, JK., Xiao, PY., Meng, Y., Guan, JY., Wen, JX., Liu, JH., Li, JY., He, QH., Jia, ZX., Marwick, B., & Lai, ZP. (in prep.). Technological behaviors of Upper Paleolithic hominins at the Geluo Cave, southeastern Tibetan Plateau.**
 
-------------------------------------------------------------------------
-
-### :busts_in_silhouette: Authors and affiliations
-
-**Qijun Ruan**<sup>1\*</sup>, **Jinkai Wei**<sup>1\*</sup>, **Peiyuan Xiao**<sup>2,3</sup>, **Yue Meng**<sup>1</sup>, **Jianyu Guan**<sup>1</sup>, **Jianhui Liu**<sup>1</sup>, **Junyi Li**<sup>1</sup>, **Qionghui He**<sup>4</sup>, **Zhenxiu Jia**<sup>2</sup>, **Ben Marwick**<sup>5</sup>, **Zhongping Lai**<sup>6\*</sup>
-
-- <sup>1</sup> *Yunnan Provincial Institute of Cultural Relics and Archaeology, Kunming, 650118, China.*
-- <sup>2</sup> *Group of Alpine Paleoecology and Human Adaptation, State Key Laboratory of Tibetan Plateau Earth System Science, Institute of Tibetan Plateau Research, Chinese Academy of Sciences, Beijing, 100101, China.*
-- <sup>3</sup> *University of Chinese Academy of Sciences, Beijing, 101408, China.*
-- <sup>4</sup> *Weixi Lisu Autonomous County Cultural Relics Management Office, Weixi, 674600, China.*
-- <sup>5</sup> *(affiliation to be added)*
-- <sup>6</sup> *(affiliation to be added)*
-
-<sup>\*</sup> Corresponding authors: Qijun Ruan, Jinkai Wei, Zhongping Lai *(contact emails to be added)*.
+The analyses concern the lithic assemblage from the Geluo Cave (GLD; 各洛洞) in northwestern Yunnan. Each script in [`R/`](R) stands on its own: it reads the tables in [`data/`](data) and writes its figures to [`output/`](output).
 
 ------------------------------------------------------------------------
 
-### :page_with_curl: Abstract
+### 👥 Authors and Affiliations
 
-The Geluo Cave is a newly discovered Upper Paleolithic site located in the northwest region of Yunnan Province, southeastern Tibetan Plateau. Two test excavations were conducted at the site in 2022 and 2024, and in total, 336 stone artifacts have been retrieved, along with a small number of faunal remains. Three cultural layers have been identified at the site, and the radiocarbon and optically stimulated luminescence dating have assigned these cultural layers into an age range of ~35–11 ka, corresponding to the late MIS 3, the LGM, and the deglacial periods. Lithic assemblage at the site shows the diverse exploitation of raw materials, including spilite, andesite, quartz, chert, and other types of igneous rocks, all of them were easily available from nearby river gravel. Flakes are the primary type in the assemblage, accompanied by a small number of cores and retouched tools. Overall, lithic industry at the Geluo Cave is characterized by a small sized core and flake technology, which shows similarity with lithic assemblages found in some contemporary sites in East Asia, likely indicating the technological and/or population dispersal across regions.
+**Qijun Ruan**<sup>a</sup>[<img src="https://info.orcid.org/wp-content/uploads/2019/11/orcid_16x16.png" alt="ORCID iD" width="16" height="16"/>](https://orcid.org/0009-0000-2143-5335), **Jinkai Wei**<sup>a</sup>[<img src="https://info.orcid.org/wp-content/uploads/2019/11/orcid_16x16.png" alt="ORCID iD" width="16" height="16"/>](https://orcid.org/0009-0000-4482-435X)✉, **Peiyuan Xiao**<sup>b,c</sup>[<img src="https://info.orcid.org/wp-content/uploads/2019/11/orcid_16x16.png" alt="ORCID iD" width="16" height="16"/>](https://orcid.org/0009-0000-9733-5875), **Yue Meng**<sup>a</sup>, **Jianyu Guan**<sup>a</sup>, **Jiaxin Wen**<sup>a</sup>, **Jianhui Liu**<sup>a</sup>, **Junyi Li**<sup>a</sup>, **Qionghui He**<sup>d</sup>, **Zhenxiu Jia**<sup>b</sup>[<img src="https://info.orcid.org/wp-content/uploads/2019/11/orcid_16x16.png" alt="ORCID iD" width="16" height="16"/>](https://orcid.org/0000-0002-7514-4514), **Ben Marwick**<sup>e</sup>[<img src="https://info.orcid.org/wp-content/uploads/2019/11/orcid_16x16.png" alt="ORCID iD" width="16" height="16"/>](https://orcid.org/0000-0001-7879-4531)✉, **Zhongping Lai**<sup>f</sup>[<img src="https://info.orcid.org/wp-content/uploads/2019/11/orcid_16x16.png" alt="ORCID iD" width="16" height="16"/>](https://orcid.org/0000-0002-0139-9346)✉
 
-------------------------------------------------------------------------
+- <sup>a</sup> *Yunnan Provincial Institute of Cultural Relics and Archaeology, Kunming, 650118, China.*
+- <sup>b</sup> *Alpine Paleoecology and Human Adaptation Group (ALPHA Group), State Key Laboratory of Tibetan Plateau Earth System, Environment and Resources, Institute of Tibetan Plateau Research, Chinese Academy of Sciences, Beijing, 100101, China.*
+- <sup>c</sup> *University of Chinese Academy of Sciences, Beijing, 101408, China.*
+- <sup>d</sup> *Weixi Lisu Autonomous County Cultural Relics Management Office, Weixi, 674600, China.*
+- <sup>e</sup> *Department of Anthropology, University of Washington, Seattle, WA, USA.*
+- <sup>f</sup> *Institute of Marine Science, Shantou University, Shantou, Guangdong Province, 515063, China.*
 
-### :label: Keywords
+**✉ Corresponding Authors:** Jinkai Wei ([weijinkai7\@163.com](mailto:weijinkai7@163.com)) \* Ben Marwick ([bmarwick\@uw.edu](mailto:bmarwick@uw.edu)) \* Zhongping Lai ([zhongpinglai\@stu.edu.cn](mailto:zhongpinglai@stu.edu.cn))
 
-Southeastern Tibetan Plateau; Upper Paleolithic; Geluo Cave; Core and flake technology; Early modern human dispersal
-
-------------------------------------------------------------------------
-
-### :open_file_folder: Contents
-
-- [:file_folder: data](data) — analysis-ready Excel workbooks read by the scripts:
-  - `GLD_lithic_data.xlsx` — lithic artifact measurements and observations across five sheets: `Core`, `Complete_flake`, `Broken_flake`, `Tool`, and `Chunk`.
-  - `GLD_lithic_coord.xlsx` — piece-plotted coordinates of stone artifacts and faunal remains: `x` = 东坐标 (east), `y` = 北坐标 (north), `z` = elevation (m a.s.l.), plus `Trench` and `Type`.
-- [:file_folder: R](R) — analysis scripts (run from the project root):
-  - [`famd_flakes.R`](R/famd_flakes.R) — FAMD of complete flakes (Layer as a supplementary variable) + PERMANOVA on flake attributes.
-  - [`flake_tech_attributes.R`](R/flake_tech_attributes.R) — technological attributes of complete flakes by Toth type (boxplots + bubble composition).
-  - [`flake_tech_attributes_stacked.R`](R/flake_tech_attributes_stacked.R) — stacked-bar variant of the attribute composition panels.
-  - [`boxplot_by_type.R`](R/boxplot_by_type.R) — size (length/width/thickness/mass) of the main artifact classes.
-  - [`spatial_distribution.R`](R/spatial_distribution.R) — plan view (X–Y) and profile (X–Z) of piece-plotted finds by trench and type.
-  - [`plot_style.R`](R/plot_style.R) — shared house-style (colours, palettes); sourced by the four non-spatial scripts.
-- [:file_folder: output](output) — generated PNG figures, plus `famd_summary.txt` (FAMD/PERMANOVA numeric summary) and `figure_captions.md` (draft captions).
-- [:file_folder: Original_raw_data](Original_raw_data) — original field workbooks and the manuscript draft (see [Provenance](#seedling-data-provenance) below); the `data/` workbooks are derived from these.
-
-At the project root, [`Geluo_cave_analysis.Rproj`](Geluo_cave_analysis.Rproj) opens the project in RStudio with the working directory set to the repository root.
-
-> **Note:** the scripts read files using paths relative to the **project root** (for example, `data/GLD_lithic_data.xlsx`) and write to `output/`. Always run them from the repository root — opening `Geluo_cave_analysis.Rproj` in RStudio sets the expected context.
+🔧 **Maintainers:** [Peiyuan Xiao](mailto:xiaopeiyuan@itpcas.ac.cn) & [Jinkai Wei](mailto:weijinkai7@163.com)
 
 ------------------------------------------------------------------------
 
-### :rocket: How to reproduce
+### 📁 Contents
 
-1.  Open [`Geluo_cave_analysis.Rproj`](Geluo_cave_analysis.Rproj) in RStudio (this sets the working directory to the repository root), or set it manually with `setwd()`.
+- [:file_folder: data](data): the analysis-ready tables read by the scripts.
 
-2.  Install the required packages (once):
+  - `GLD_lithic_data.xlsx`: the measurements and technological observations of the lithic assemblage, one sheet per artifact class (`Core`, `Complete_flake`, `Broken_flake`, `Tool`, `Chunk`).
+  - `GLD_lithic_coord.xlsx`: the piece-plotted positions of the stone artifacts and faunal remains from the 2022 and 2024 excavations, with `x` east, `y` north and `z` elevation (m a.s.l.), plus the trench and the type of find.
+  - `GLD_lithic_coord_T1updated.xlsx`: the same table with one column added, the relative positions (distance from the trench walls, and height) recorded in the field for the 22 finds from the 2022 trench, from which their coordinates were reconstructed. No script reads it; it documents that reconstruction.
+  - `site_date.csv`: the coordinates of Geluo and seven comparative sites in Yunnan, in degrees, minutes and seconds.
 
-    ``` r
-    install.packages(c(
-      "readxl", "dplyr", "tidyr", "ggplot2", "patchwork",
-      "FactoMineR", "factoextra", "cluster", "vegan", "ggrepel"
-    ))
-    ```
+- [:file_folder: R](R): the analysis scripts.
 
-3.  Source the figure scripts from the project root:
+  - [`famd_flakes.R`](R/famd_flakes.R): factor analysis of mixed data (FAMD) of the complete flakes, with layer as a supplementary variable, and a PERMANOVA on Gower distances testing whether flake attributes differ between layers. It sets the seed (42) and writes its numeric results to `output/famd_summary.txt`.
+  - [`flake_tech_attributes.R`](R/flake_tech_attributes.R): the technological attributes of the complete flakes by Toth flake type, as boxplots of elongation, platform angle and dorsal scar count, and bubble charts of cortex, platform type and scar pattern.
+  - [`flake_tech_attributes_stacked.R`](R/flake_tech_attributes_stacked.R): the same figure with stacked bars in place of the bubble charts, kept alongside it for comparison.
+  - [`boxplot_by_type.R`](R/boxplot_by_type.R): the length, width, thickness and mass of cores, percussion flakes, bipolar-on-anvil flakes and retouched flakes.
+  - [`spatial_distribution.R`](R/spatial_distribution.R): the plan (X–Y) and profile (X–Z) of the piece-plotted finds, by trench and type of find.
+  - [`plot_style.R`](R/plot_style.R): the shared colours and palettes, sourced by the four non-spatial scripts.
+  - [`ET_WT_SR_NPP_analysis.R`](R/ET_WT_SR_NPP_analysis.R): palaeoclimate maps of the region at 34, 20 and 12 ka from the pastclim monthly reconstructions, of effective temperature, mean winter temperature, summer precipitation and annual net primary productivity, with the sites marked.
+  - [`Site Occupation Periods and Stone Artifact Counts.R`](R/Site%20Occupation%20Periods%20and%20Stone%20Artifact%20Counts.R): the occupation spans of Geluo and six other sites in Yunnan against the climatic stages from late MIS 3 to early MIS 1, with line width scaled to the number of stone artifacts and colour to the technocomplex. Its site data are entered in the script.
 
-    ``` r
-    source("R/famd_flakes.R")
-    source("R/flake_tech_attributes.R")
-    source("R/flake_tech_attributes_stacked.R")
-    source("R/boxplot_by_type.R")
-    source("R/spatial_distribution.R")
-    ```
+- [:file_folder: output](output): the figures the scripts write (listed under [Outputs](#-outputs)), `famd_summary.txt`, and `figure_captions.md`, the draft captions for the manuscript figures.
 
-4.  The regenerated figures are written to `output/` (existing files with the same name are overwritten).
+- [`Geluo_cave_analysis.Rproj`](Geluo_cave_analysis.Rproj), at the project root, opens the project in RStudio with the working directory set to the root.
 
-> A locked package environment (`renv`), a one-shot `run_all.R` driver, and a `Dockerfile` for a fully pinned container are **not yet set up** for this compendium; they can be added later for stricter reproducibility.
+- The package environment, at the project root:
+
+  - [`renv.lock`](renv.lock): every R package version the analysis was run under, the two newest scripts included. `renv::restore()` reproduces the library.
+  - [`.Rprofile`](.Rprofile) and [`renv/`](renv): activate that library whenever R is started in the project. The installed packages themselves (`renv/library/`) are git-ignored.
 
 ------------------------------------------------------------------------
 
-### :bar_chart: Outputs
+### 🚀 How to Reproduce
+
+There is no container or pipeline for this compendium yet; the scripts are run directly in a local installation of R, with the package versions pinned by `renv.lock`. They were run under R 4.6.1 on Windows.
+
+``` sh
+git clone https://github.com/PeiyuanXiao/Geluo_cave_analysis.git
+cd Geluo_cave_analysis
+```
+
+Open `Geluo_cave_analysis.Rproj` in RStudio, then:
+
+``` r
+renv::restore()                      # the package versions in renv.lock
+
+source("R/famd_flakes.R")
+source("R/flake_tech_attributes.R")
+source("R/flake_tech_attributes_stacked.R")
+source("R/boxplot_by_type.R")
+source("R/spatial_distribution.R")
+```
+
+The five scripts are independent of one another and can be run in any order. Each overwrites its own figures in `output/`.
+
+**The two newest scripts are not yet part of this.** `ET_WT_SR_NPP_analysis.R` reads the pastclim monthly climate reconstructions, which are not in this repository, and a decimal-degree copy of the site coordinates (`site_date_clean.csv`), both from absolute paths on the machine it was written on, and saves its twelve maps there as well. It also downloads the Natural Earth river lines, so it needs a network connection. Its packages are in `renv.lock` with the rest. `Site Occupation Periods and Stone Artifact Counts.R` runs as it is, but draws its figure in the plot window without saving it to `output/`.
+
+------------------------------------------------------------------------
+
+### 📊 Outputs
 
 | Output | Script | Description |
 |----|----|----|
@@ -101,52 +101,16 @@ At the project root, [`Geluo_cave_analysis.Rproj`](Geluo_cave_analysis.Rproj) op
 | `fig_spatial_profile.png` | `spatial_distribution.R` | Profile (X–Z, elevation) of piece-plotted finds. |
 | `fig_spatial_combined.png` | `spatial_distribution.R` | Combined plan + profile panel. |
 
-Draft captions for the main figures are in [`output/figure_captions.md`](output/figure_captions.md). `output/diag_trench_layout_check.png` is a diagnostic (not a manuscript figure) comparing the raw 2024 trench coordinates against the trench-labelling scheme.
+Draft captions for the main figures are in [`output/figure_captions.md`](output/figure_captions.md). `output/diag_trench_layout_check.png` is a diagnostic, not a manuscript figure, comparing the raw 2024 trench coordinates against the trench-labelling scheme.
 
 ------------------------------------------------------------------------
 
-### :computer: Computational environment
+### ⚖️ Licenses
 
-- **R:** the analysis was run under R 4.5.2 (Windows).
+**Text and figures:** [CC-BY-4.0](http://creativecommons.org/licenses/by/4.0/)
 
-- **R packages:**
+**Code:** [MIT](https://opensource.org/licenses/MIT)
 
-  | Package      | Role                                            |
-  |--------------|-------------------------------------------------|
-  | `readxl`     | Reading Excel raw-data files.                   |
-  | `dplyr`      | Data wrangling.                                 |
-  | `tidyr`      | Reshaping data.                                 |
-  | `ggplot2`    | Graphics.                                        |
-  | `patchwork`  | Composing multipanel figures.                   |
-  | `FactoMineR` | Factor analysis of mixed data (FAMD).           |
-  | `factoextra` | Extracting and plotting FAMD results.           |
-  | `cluster`    | Gower distances for the flake-attribute PERMANOVA. |
-  | `vegan`      | PERMANOVA on flake attributes.                  |
-  | `ggrepel`    | Non-overlapping plot labels.                    |
+**Data:** [CC-0](http://creativecommons.org/publicdomain/zero/1.0/), attribution requested upon reuse
 
-To record the exact local environment used for a run, execute `sessionInfo()` after sourcing the scripts.
-
-------------------------------------------------------------------------
-
-### :seedling: Data provenance
-
-The `data/` workbooks are derived from the original field records in [`Original_raw_data/`](Original_raw_data):
-
-- `2022YWT TG1标本初步登记表.xlsx` — 2022 test-trench (TG1) specimen register (relative find positions only).
-- `2024GLD-T1遗物坐标.xlsx`, `2024GLD-T2遗物坐标.xlsx`, `2024GLD-T3遗物坐标.xlsx` — 2024 total-station artifact coordinates (北坐标 / 东坐标 / 高程) for the three 2024 excavation areas.
-- `石制品测量观察表（地层合并）.xls` — lithic measurement/observation table (layers merged); source for `GLD_lithic_data.xlsx`.
-- `Technological behaviors ... Geluo Cave ....docx` — manuscript draft.
-
-------------------------------------------------------------------------
-
-### :clipboard: Notes for reviewers
-
-- **Trench labels and orientation in `spatial_distribution.R`.** Trenches are re-labelled by spatial cluster from the source specimen ID (not the sheet's `Trench` column): `2022YWT…` → **T1**; `24GLD_1/2/4…` (northwest cluster) → **T2**; `24GLD_T1/T2…` (southeast cluster) → **T3**. Both plan-view axes are reversed so that T1 plots at the lower-left, with T2 to the east and T3 to the north, matching the excavation description. The 2022 (T1) finds have no total-station coordinates in the raw records; their positions are reconstructed and are provisional.
-- **Layers.** `GLD_lithic_coord.xlsx` has no cultural-layer field, and its specimen IDs do not match those in `GLD_lithic_data.xlsx`, so the spatial plots are grouped by trench (the spatial excavation unit), not by layer.
-- **Lithic sheets.** Common categorical fields are normalized to character before the sheets of `GLD_lithic_data.xlsx` are combined, to avoid type conflicts from Excel storing the same field differently across sheets.
-
-------------------------------------------------------------------------
-
-### :memo: License
-
-License to be determined. Please cite the associated manuscript when using or adapting these materials.
+[`LICENSE.md`](LICENSE.md) says which files each one covers.
